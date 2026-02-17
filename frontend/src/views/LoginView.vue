@@ -24,6 +24,7 @@
             placeholder="Enter password"
             :feedback="false"
             class="w-full"
+            inputClass="w-full"
             :disabled="loading"
           />
         </div>
