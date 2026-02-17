@@ -49,8 +49,26 @@
       <!-- Demo credentials -->
       <div class="demo-credentials mt-4 p-3 surface-50 border-round">
         <p class="text-sm font-semibold mb-2">Demo Credentials:</p>
-        <p class="text-xs">Admin: admin / admin123</p>
-        <p class="text-xs">User: user / user123</p>
+        <div class="credentials-grid">
+          <div class="credential-item">
+            <strong>SuperAdmin:</strong> superadmin / super123
+          </div>
+          <div class="credential-item">
+            <strong>Admin:</strong> admin / admin123
+          </div>
+          <div class="credential-item">
+            <strong>IT Staff:</strong> it_staff / it123
+          </div>
+          <div class="credential-item">
+            <strong>Bảo Trì:</strong> bao_tri / baotri123
+          </div>
+          <div class="credential-item">
+            <strong>Bảo Vệ:</strong> bao_ve / baove123
+          </div>
+          <div class="credential-item">
+            <strong>Quản Lý:</strong> quan_ly / quanly123
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -83,8 +101,8 @@ const handleLogin = async () => {
     const response = await authService.login(username.value, password.value)
     authStore.storeTokens(response.data)
 
-    // Redirect to dashboard or admin based on role
-    const redirectPath = route.query.redirect || (authStore.isAdmin ? '/admin/dashboard' : '/dashboard')
+    // Redirect based on role and query parameter
+    const redirectPath = route.query.redirect || authStore.getDefaultRoute()
     router.push(redirectPath)
   } catch (err) {
     error.value = err.response?.data?.detail || 'Login failed'
@@ -142,5 +160,20 @@ const handleLogin = async () => {
 .demo-credentials {
   background-color: #f0f3ff;
   border: 1px solid #e0e7ff;
+}
+
+.credentials-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+.credential-item {
+  font-size: 0.75rem;
+  padding: 0.25rem 0;
+}
+
+.credential-item strong {
+  color: #667eea;
 }
 </style>

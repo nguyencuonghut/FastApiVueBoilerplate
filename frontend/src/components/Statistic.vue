@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   label: {
     type: String,
     required: true
@@ -37,7 +37,7 @@ const getColorBySeverity = () => {
     warning: '#f59e0b',
     danger: '#ef4444'
   }
-  return colors[severity.value] || colors.info
+  return colors[props.severity] || colors.info
 }
 </script>
 

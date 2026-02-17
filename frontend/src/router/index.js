@@ -6,7 +6,8 @@ const routes = [
     path: '/',
     redirect: () => {
       const authStore = useAuthStore()
-      return authStore.isAuthenticated ? '/dashboard' : '/login'
+      if (!authStore.isAuthenticated) return '/login'
+      return authStore.getDefaultRoute()
     }
   },
   {
@@ -15,23 +16,11 @@ const routes = [
     component: () => import('../views/LoginView.vue'),
     meta: { layout: 'auth', requiresAuth: false }
   },
-  {
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: () => import('../views/DashboardView.vue'),
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/profile',
-    name: 'Profile',
-    component: () => import('../views/ProfileView.vue'),
-    meta: { requiresAuth: true }
-  },
+  // Admin Layout (for Admin & SuperAdmin roles)
   {
     path: '/admin',
-    name: 'Admin',
     component: () => import('../layouts/AdminLayout.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true },
+    meta: { requiresAuth: true, requiresRoles: ['admin', 'superadmin'] },
     children: [
       {
         path: 'dashboard',
@@ -50,6 +39,62 @@ const routes = [
       }
     ]
   },
+  // System Layout (for IT role)
+  {
+    path: '/system',
+    component: () => import('../layouts/SystemLayout.vue'),
+    meta: { requiresAuth: true, requiresRoles: ['it'] },
+    children: [
+      {
+        path: 'dashboard',
+        name: 'SystemDashboard',
+        component: () => import('../views/admin/AdminDashboardView.vue')
+      }
+    ]
+  },
+  // Monitor Layout (for Bảo Trì role)
+  {
+    path: '/monitor',
+    component: () => import('../layouts/MonitorLayout.vue'),
+    meta: { requiresAuth: true, requiresRoles: ['bao_tri'] },
+    children: [
+      {
+        path: 'dashboard',
+        name: 'MonitorDashboard',
+        component: () => import('../views/DashboardView.vue')
+      },
+      {
+        path: 'profile',
+        name: 'UserProfile',
+        component: () => import('../views/ProfileView.vue')
+      }
+    ]
+  },
+  // Kiosk Layout (for Bảo Vệ & Quản Lý Trại roles)
+  {
+    path: '/kiosk',
+    component: () => import('../layouts/KioskLayout.vue'),
+    meta: { requiresAuth: true, requiresRoles: ['bao_ve', 'quan_ly_trai'] },
+    children: [
+      {
+        path: 'display',
+        name: 'KioskDisplay',
+        component: () => import('../views/DashboardView.vue')
+      }
+    ]
+  },
+  // Legacy redirects for backward compatibility
+  {
+    path: '/dashboard',
+    redirect: () => {
+      const authStore = useAuthStore()
+      return authStore.getDefaultRoute()
+    }
+  },
+  {
+    path: '/profile',
+    redirect: '/monitor/profile'
+  },
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
@@ -67,15 +112,31 @@ router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
   authStore.loadTokens()
 
+  // Check authentication
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next({ name: 'Login', query: { redirect: to.fullPath } })
-  } else if (to.meta.requiresAdmin && !authStore.isAdmin) {
-    next({ name: 'Dashboard' })
-  } else if (to.name === 'Login' && authStore.isAuthenticated) {
-    next({ name: 'Dashboard' })
-  } else {
-    next()
+    return
   }
+
+  // Check role-based access
+  if (to.meta.requiresRoles && authStore.isAuthenticated) {
+    const userRole = authStore.getUserRole
+    const allowedRoles = to.meta.requiresRoles
+    
+    if (!allowedRoles.includes(userRole)) {
+      // Redirect to user's default route if not authorized
+      next(authStore.getDefaultRoute())
+      return
+    }
+  }
+
+  // Redirect authenticated users away from login
+  if (to.name === 'Login' && authStore.isAuthenticated) {
+    next(authStore.getDefaultRoute())
+    return
+  }
+
+  next()
 })
 
 export default router
