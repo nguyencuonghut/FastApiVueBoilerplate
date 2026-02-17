@@ -16,12 +16,12 @@ async def login(
     db: Session = Depends(get_db)
 ):
     """User login"""
-    user = UserService.authenticate_user(db, credentials.username, credentials.password)
+    user = UserService.authenticate_user(db, credentials.email, credentials.password)
     
     if not user or not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid username or password"
+            detail="Invalid email or password"
         )
     
     access_token = create_access_token(data={"sub": str(user.id)})

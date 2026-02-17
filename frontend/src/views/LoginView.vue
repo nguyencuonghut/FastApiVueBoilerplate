@@ -1,16 +1,20 @@
 <template>
   <div class="login-container">
+    <button class="theme-toggle" @click="toggleDarkMode" type="button" title="Toggle Dark Mode">
+      <i :class="['pi', { 'pi-moon': isDarkTheme, 'pi-sun': !isDarkTheme }]"></i>
+    </button>
     <div class="login-card">
       <h1 class="login-title">FastAPI Vue Boilerplate</h1>
       <p class="login-subtitle">Sign in to your account</p>
 
       <form @submit.prevent="handleLogin">
         <div class="form-group">
-          <label for="username">Username</label>
+          <label for="email">Email</label>
           <InputText
-            id="username"
-            v-model="username"
-            placeholder="Enter username"
+            id="email"
+            v-model="email"
+            type="email"
+            placeholder="Enter your email"
             class="w-full"
             :disabled="loading"
           />
@@ -34,7 +38,7 @@
           label="Sign In"
           class="w-full"
           :loading="loading"
-          :disabled="loading || !username || !password"
+          :disabled="loading || !email || !password"
         />
       </form>
 
@@ -53,22 +57,22 @@
         <p class="text-sm font-semibold mb-2">Demo Credentials:</p>
         <div class="credentials-grid">
           <div class="credential-item">
-            <strong>SuperAdmin:</strong> superadmin / super123
+            <strong>SuperAdmin:</strong> superadmin@example.com / super123
           </div>
           <div class="credential-item">
-            <strong>Admin:</strong> admin / admin123
+            <strong>Admin:</strong> admin@example.com / admin123
           </div>
           <div class="credential-item">
-            <strong>IT Staff:</strong> it_staff / it123
+            <strong>IT Staff:</strong> it@example.com / it123
           </div>
           <div class="credential-item">
-            <strong>Bảo Trì:</strong> bao_tri / baotri123
+            <strong>Bảo Trì:</strong> baotri@example.com / baotri123
           </div>
           <div class="credential-item">
-            <strong>Bảo Vệ:</strong> bao_ve / baove123
+            <strong>Bảo Vệ:</strong> baove@example.com / baove123
           </div>
           <div class="credential-item">
-            <strong>Quản Lý:</strong> quan_ly / quanly123
+            <strong>Quản Lý:</strong> quanly@example.com / quanly123
           </div>
         </div>
       </div>
@@ -80,6 +84,7 @@
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { useLayout } from '../composables/layout'
 import { authService } from '../services'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
@@ -89,8 +94,9 @@ import Message from 'primevue/message'
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
+const { toggleDarkMode, isDarkTheme } = useLayout()
 
-const username = ref('')
+const email = ref('')
 const password = ref('')
 const loading = ref(false)
 const error = ref(null)
@@ -100,7 +106,7 @@ const handleLogin = async () => {
   error.value = null
 
   try {
-    const response = await authService.login(username.value, password.value)
+    const response = await authService.login(email.value, password.value)
     authStore.storeTokens(response.data)
 
     // Redirect based on role and query parameter
@@ -121,10 +127,36 @@ const handleLogin = async () => {
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+}
+
+.theme-toggle {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 3rem;
+  height: 3rem;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  transition: all 0.3s;
+  z-index: 10;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
 }
 
 .login-card {
-  background: white;
+  background: var(--surface-card);
   border-radius: 8px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   padding: 40px;
@@ -137,12 +169,12 @@ const handleLogin = async () => {
   font-weight: bold;
   margin-bottom: 8px;
   text-align: center;
-  color: #333;
+  color: var(--text-color);
 }
 
 .login-subtitle {
   font-size: 14px;
-  color: #999;
+  color: var(--text-color-secondary);
   text-align: center;
   margin-bottom: 24px;
 }
@@ -156,12 +188,12 @@ const handleLogin = async () => {
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 8px;
-  color: #333;
+  color: var(--text-color);
 }
 
 .demo-credentials {
-  background-color: #f0f3ff;
-  border: 1px solid #e0e7ff;
+  background-color: var(--surface-50);
+  border: 1px solid var(--surface-border);
 }
 
 .credentials-grid {
@@ -176,6 +208,6 @@ const handleLogin = async () => {
 }
 
 .credential-item strong {
-  color: #667eea;
+  color: var(--primary-color);
 }
 </style>

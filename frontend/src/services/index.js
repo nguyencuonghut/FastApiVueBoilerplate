@@ -6,8 +6,8 @@ const ADMIN_API = '/admin'
 
 export const authService = {
   // Login
-  login: (username, password) => {
-    return apiClient.post(`${AUTH_API}/login`, { username, password })
+  login: (email, password) => {
+    return apiClient.post(`${AUTH_API}/login`, { email, password })
   },
 
   // Refresh token

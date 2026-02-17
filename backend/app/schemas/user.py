@@ -63,7 +63,7 @@ class UserWithPermissions(UserResponse):
 
 
 class LoginRequest(BaseModel):
-    username: str
+    email: str
     password: str
 
 
