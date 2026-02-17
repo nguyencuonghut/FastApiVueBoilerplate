@@ -345,9 +345,9 @@ onUnmounted(() => {
 }
 
 .stat-card {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--surface-card);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--surface-border);
   transition: transform 0.2s;
 }
 
@@ -416,9 +416,9 @@ onUnmounted(() => {
 .activity-card,
 .health-card,
 .table-card {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--surface-card);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--surface-border);
 }
 
 .card-header {
@@ -442,15 +442,15 @@ onUnmounted(() => {
   align-items: center;
   gap: 1rem;
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--surface-50);
   border-radius: 8px;
   transition: all 0.3s;
 }
 
 .activity-item.new {
   animation: slideIn 0.5s ease;
-  background: rgba(103, 126, 234, 0.1);
-  border-left: 3px solid #667eea;
+  background: var(--primary-50);
+  border-left: 3px solid var(--primary-color);
 }
 
 @keyframes slideIn {

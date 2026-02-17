@@ -1,10 +1,10 @@
-import { computed, reactive } from 'vue'
+import { computed, reactive, watch } from 'vue'
 
 const layoutConfig = reactive({
   preset: 'Aura',
   primary: 'emerald',
   surface: null,
-  darkTheme: false,
+  darkTheme: localStorage.getItem('darkTheme') === 'true',
   menuMode: 'static' // static or overlay
 })
 
@@ -18,6 +18,16 @@ const layoutState = reactive({
   activeMenuItem: null,
   activePath: null,
   mobileMenuActive: false
+})
+
+// Initialize dark mode on load
+if (layoutConfig.darkTheme) {
+  document.documentElement.classList.add('app-dark')
+}
+
+// Watch for dark theme changes and persist to localStorage
+watch(() => layoutConfig.darkTheme, (newValue) => {
+  localStorage.setItem('darkTheme', newValue.toString())
 })
 
 export function useLayout() {

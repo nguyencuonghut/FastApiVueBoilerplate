@@ -43,7 +43,7 @@ const getColorBySeverity = () => {
 
 <style scoped>
 .statistic-card {
-  background: white;
+  background: var(--surface-card);
   border-radius: 8px;
   padding: 20px;
   display: flex;
@@ -69,7 +69,7 @@ const getColorBySeverity = () => {
 .statistic-label {
   margin: 0;
   font-size: 12px;
-  color: #999;
+  color: var(--text-color-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -78,6 +78,6 @@ const getColorBySeverity = () => {
   margin: 4px 0 0 0;
   font-size: 28px;
   font-weight: bold;
-  color: #333;
+  color: var(--text-color);
 }
 </style>

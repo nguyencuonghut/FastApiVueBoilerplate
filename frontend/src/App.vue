@@ -49,7 +49,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f5f7fa;
+  background-color: var(--surface-ground);
+  color: var(--text-color);
 }
 
 .app-container {

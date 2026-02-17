@@ -78,6 +78,7 @@ const getPageTitle = () => {
 
 <style scoped>
 .navbar {
-  background: white;
+  background: var(--surface-card);
+  color: var(--text-color);
 }
 </style>
