@@ -42,10 +42,11 @@
         v-if="error"
         severity="error"
         class="mt-4"
-        :text="error"
         closable
         @close="error = null"
-      />
+      >
+        {{ error }}
+      </Message>
 
       <!-- Demo credentials -->
       <div class="demo-credentials mt-4 p-3 surface-50 border-round">
