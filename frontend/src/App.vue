@@ -1,17 +1,12 @@
 <template>
-  <div class="app-container">
-    <Navbar v-if="showNavbar && authStore.isAuthenticated" />
-    <div v-if="authStore.isAuthenticated" class="main-content">
-      <router-view />
-    </div>
-    <div v-else>
-      <router-view />
-    </div>
+  <div class="app-container" :class="{ 'layout-route': isLayoutRoute }">
+    <Navbar v-if="showNavbar && authStore.isAuthenticated && !isLayoutRoute" />
+    <router-view />
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from './stores/auth'
 import Navbar from './components/Navbar.vue'
@@ -21,8 +16,17 @@ const authStore = useAuthStore()
 
 authStore.loadTokens()
 
+// Don't show navbar for login, not found, and layout routes
 const showNavbar = computed(() => {
   return route.name !== 'Login' && route.name !== 'NotFound'
+})
+
+// Check if current route uses a layout
+const isLayoutRoute = computed(() => {
+  return route.path.startsWith('/admin') || 
+         route.path.startsWith('/monitor') || 
+         route.path.startsWith('/system') || 
+         route.path.startsWith('/kiosk')
 })
 </script>
 
@@ -47,12 +51,15 @@ body {
 }
 
 .app-container {
-  display: flex;
-  flex-direction: column;
   height: 100vh;
 }
 
-.main-content {
+.app-container:not(.layout-route) {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-container:not(.layout-route) .main-content {
   flex: 1;
   overflow-y: auto;
 }

@@ -10,16 +10,18 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "vue": "^3.5.0",
-    "vue-router": "^4.4.0",
-    "pinia": "^2.2.0",
-    "primevue": "^4.3.0",
     "@primevue/themes": "^4.3.0",
+    "axios": "^1.7.0",
+    "pinia": "^2.2.0",
     "primeicons": "^7.0.0",
-    "axios": "^1.7.0"
+    "primevue": "^4.3.0",
+    "sass": "^1.97.3",
+    "vue": "^3.5.0",
+    "vue-router": "^4.4.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.0",
+    "sass-embedded": "^1.97.3",
     "vite": "^6.0.0"
   }
 }

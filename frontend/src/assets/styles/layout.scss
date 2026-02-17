@@ -1,0 +1,565 @@
+// Layout wrapper - Updated for mobile overlay fix
+.layout-wrapper {
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  
+  &.layout-static {
+    .layout-sidebar {
+      transform: translateX(0);
+      
+      // Hide on mobile by default
+      @media screen and (max-width: 1024px) {
+        transform: translateX(-100%);
+      }
+    }
+    
+    &.layout-static-inactive {
+      .layout-sidebar {
+        transform: translateX(-100%);
+      }
+      
+      .layout-main-container {
+        margin-left: 0;
+      }
+    }
+  }
+  
+  &.layout-overlay {
+    .layout-sidebar {
+      transform: translateX(-100%);
+      z-index: 1100;
+    }
+    
+    &.layout-overlay-active {
+      .layout-sidebar {
+        transform: translateX(0);
+      }
+      
+      .layout-mask {
+        display: block;
+      }
+    }
+  }
+  
+  &.layout-mobile-active {
+    .layout-sidebar {
+      transform: translateX(0) !important;
+      z-index: 1100;
+    }
+    
+    .layout-mask {
+      display: block;
+      animation: fadein 0.2s;
+    }
+    
+    // Prevent body scroll when mobile menu is open
+    overflow: hidden;
+  }
+}
+
+// Layout mask for mobile overlay
+.layout-mask {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1099;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  
+  @supports (backdrop-filter: blur(2px)) {
+    backdrop-filter: blur(2px);
+  }
+}
+
+// Topbar
+.layout-topbar {
+  position: fixed;
+  height: 5rem;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  padding: 0 1rem;
+  background-color: var(--surface-card);
+  transition: left 0.3s;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.1);
+  
+  @media screen and (min-width: 768px) {
+    padding: 0 2rem;
+  }
+  
+  .layout-topbar-logo-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 0;
+    
+    @media screen and (min-width: 768px) {
+      gap: 1rem;
+    }
+    
+    @media screen and (min-width: 1024px) {
+      gap: 1.5rem;
+      flex: initial;
+    }
+    
+    .layout-menu-button {
+      flex-shrink: 0;
+    }
+    
+    .layout-topbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-color);
+      font-size: 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      min-width: 0;
+      
+      @media screen and (min-width: 768px) {
+        font-size: 1.25rem;
+      }
+      
+      @media screen and (min-width: 1024px) {
+        font-size: 1.5rem;
+      }
+      
+      svg {
+        height: 1.5rem;
+        width: auto;
+        flex-shrink: 0;
+        
+        @media screen and (min-width: 768px) {
+          height: 1.75rem;
+        }
+        
+        @media screen and (min-width: 1024px) {
+          height: 2rem;
+        }
+      }
+      
+      span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+  
+  .layout-topbar-actions {
+    display: inline-flex;
+    align-items: center;
+    margin-left: auto;
+    gap: 0.25rem;
+    
+    @media screen and (min-width: 1024px) {
+      gap: 0.5rem;
+    }
+  }
+  
+  .layout-topbar-action {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    color: var(--text-color);
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    cursor: pointer;
+    user-select: none;
+    border: 0 none;
+    background: transparent;
+    transition: background-color 0.3s;
+    
+    @media screen and (min-width: 1024px) {
+      width: 3rem;
+      height: 3rem;
+    }
+    
+    &:hover {
+      background-color: var(--surface-hover);
+    }
+    
+    i {
+      font-size: 1.25rem;
+      line-height: 1;
+      
+      @media screen and (min-width: 1024px) {
+        font-size: 1.5rem;
+      }
+    }
+  }
+  
+  .layout-topbar-menu-mobile {
+    position: fixed;
+    right: 1rem;
+    top: calc(5rem + 0.5rem);
+    background: var(--surface-card);
+    border: 1px solid var(--surface-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    min-width: 200px;
+    padding: 0.5rem;
+    z-index: 1100;
+    animation: fadein 0.2s ease-out;
+    
+    @media screen and (max-width: 640px) {
+      right: 0.75rem;
+      top: calc(4rem + 0.5rem);
+    }
+    
+    .mobile-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      border: 0 none;
+      background: transparent;
+      color: var(--text-color);
+      cursor: pointer;
+      transition: background-color 0.2s;
+      text-align: left;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      
+      &:hover {
+        background-color: var(--surface-hover);
+      }
+      
+      &:active {
+        background-color: var(--surface-200);
+      }
+      
+      i {
+        font-size: 1.25rem;
+        width: 1.5rem;
+        flex-shrink: 0;
+      }
+      
+      span {
+        flex: 1;
+      }
+    }
+  }
+  
+  .layout-menu-button {
+    color: var(--text-color);
+  }
+}
+
+// Sidebar
+.layout-sidebar {
+  position: fixed;
+  width: 16rem;
+  height: calc(100vh - 5rem);
+  z-index: 999;
+  overflow-y: auto;
+  user-select: none;
+  top: 5rem;
+  left: 0;
+  background-color: var(--surface-card);
+  border-right: 1px solid var(--surface-border);
+  transition: transform 0.3s, width 0.3s;
+  
+  // Hide by default on mobile
+  @media screen and (max-width: 1024px) {
+    transform: translateX(-100%);
+    z-index: 1100;
+    width: 240px;
+    box-shadow: 2px 0 16px rgba(0, 0, 0, 0.3);
+    background-color: var(--surface-ground);
+  }
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: var(--surface-ground);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--surface-border);
+    border-radius: 4px;
+  }
+}
+
+// Menu
+.layout-menu {
+  padding: 0;
+  list-style-type: none;
+  margin: 0;
+  
+  li {
+    &.layout-root-menuitem {
+      > .layout-menuitem-root-text {
+        font-size: 0.857rem;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--surface-500);
+        margin: 0.75rem 1rem 0.5rem 1rem;
+        display: block;
+      }
+      
+      > a {
+        display: none;
+      }
+    }
+    
+    &.menu-separator {
+      border-top: 1px solid var(--surface-border);
+      margin: 0.5rem 0;
+    }
+  }
+  
+  .layout-menuitem-link {
+    padding: 0.75rem 1rem;
+    color: var(--text-color);
+    border-radius: 6px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    margin: 2px 0;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    border: 0 none;
+    background: transparent;
+    text-decoration: none;
+    
+    .layout-menuitem-icon {
+      margin-right: 0.5rem;
+      min-width: 1.5rem;
+      text-align: center;
+    }
+    
+    .layout-menuitem-text {
+      color: var(--text-color);
+      flex: 1;
+    }
+    
+    .layout-submenu-toggler {
+      margin-left: auto;
+      transition: transform 0.3s;
+    }
+    
+    &:hover {
+      background-color: var(--surface-hover);
+    }
+    
+    &.active-route {
+      background-color: var(--primary-color);
+      color: var(--primary-color-text);
+      
+      .layout-menuitem-text,
+      .layout-menuitem-icon {
+        color: var(--primary-color-text);
+      }
+    }
+  }
+  
+  .layout-submenu {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    
+    .layout-menuitem-link {
+      padding-left: 2.5rem;
+    }
+  }
+}
+
+// Main container
+.layout-main-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  justify-content: space-between;
+  padding-top: 5rem;
+  transition: margin-left 0.3s;
+  position: relative;
+}
+
+.layout-static {
+  .layout-main-container {
+    margin-left: 16rem;
+    
+    @media screen and (max-width: 1024px) {
+      margin-left: 0;
+    }
+  }
+}
+
+.layout-overlay {
+  .layout-main-container {
+    margin-left: 0;
+  }
+}
+
+.layout-main {
+  flex: 1;
+  padding: 2rem;
+  
+  @media screen and (max-width: 768px) {
+    padding: 1.5rem;
+  }
+  
+  @media screen and (max-width: 640px) {
+    padding: 1rem;
+  }
+}
+
+.layout-footer {
+  padding: 1rem 2rem;
+  border-top: 1px solid var(--surface-border);
+}
+
+// Animation
+@keyframes fadein {
+  0% {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeout {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+}
+
+@keyframes p-anchored-overlay-enter-active {
+  0% {
+    opacity: 0;
+    transform: translateY(-2rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes p-anchored-overlay-leave-active {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-2rem);
+  }
+}
+
+.fadein {
+  animation: fadein 0.2s;
+}
+
+.fadeout {
+  animation: fadeout 0.2s;
+}
+
+.p-anchored-overlay-enter-active {
+  animation: p-anchored-overlay-enter-active 0.3s;
+}
+
+.p-anchored-overlay-leave-active {
+  animation: p-anchored-overlay-leave-active 0.3s;
+}
+
+.animate-fadein {
+  animation: p-anchored-overlay-enter-active 0.3s;
+}
+
+.animate-fadeout {
+  animation: p-anchored-overlay-leave-active 0.3s;
+}
+
+// Responsive
+@media screen and (max-width: 1024px) {
+  // On mobile, sidebar is hidden by default and shown when mobile-active
+  .layout-wrapper.layout-mobile-active {
+    .layout-sidebar {
+      transform: translateX(0);
+    }
+  }
+  
+  // Ensure main container takes full width on mobile
+  .layout-main-container {
+    margin-left: 0 !important;
+  }
+  
+  .layout-topbar {
+    .layout-topbar-logo-container {
+      .layout-topbar-logo {
+        span {
+          display: none;
+        }
+      }
+    }
+  }
+  
+  .layout-main {
+    padding: 1.5rem;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .layout-topbar {
+    padding: 0 0.75rem;
+    height: 4rem;
+    
+    .layout-topbar-logo-container {
+      gap: 0.5rem;
+      
+      .layout-menu-button {
+        width: 2rem;
+        height: 2rem;
+      }
+    }
+    
+    .layout-topbar-action {
+      width: 2rem;
+      height: 2rem;
+      
+      i {
+        font-size: 1rem;
+      }
+    }
+  }
+  
+  .layout-main-container {
+    padding-top: 4rem;
+  }
+  
+  .layout-sidebar {
+    width: 70%;
+    max-width: 240px;
+    height: calc(100vh - 4rem);
+    top: 4rem;
+  }
+  
+  .layout-main {
+    padding: 1rem;
+  }
+}
