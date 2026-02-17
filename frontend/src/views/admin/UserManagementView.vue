@@ -7,24 +7,56 @@
           User Management
         </div>
       </template>
-      <template #toolbar>
-        <div class="p-toolbar-group-start mr-4">
-          <Button
-            icon="pi pi-plus"
-            label="Add User"
-            class="p-button-success"
-            @click="openDialog"
-          />
-        </div>
-      </template>
       <template #content>
+        <Toolbar class="mb-4">
+          <template #start>
+            <Button
+              icon="pi pi-plus"
+              label="Add User"
+              severity="success"
+              @click="openDialog"
+            />
+          </template>
+          
+          <template #end>
+            <Button
+              icon="pi pi-upload"
+              label="Export"
+              severity="secondary"
+              @click="exportUsers"
+            />
+          </template>
+        </Toolbar>
+        
         <DataTable
           :value="users"
           striped-rows
           :loading="loading"
-          :paginator="true"
-          :rows="10"
+          lazy
+          paginator
+          :rows="rows"
+          :totalRecords="totalRecords"
+          :rowsPerPageOptions="[10, 25, 50]"
+          @page="onPage"
+          paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users"
         >
+          <template #header>
+            <div class="flex align-items-center justify-content-end gap-2">
+              <IconField class="w-full md:w-20rem">
+                <InputIcon>
+                  <i class="pi pi-search" />
+                </InputIcon>
+                <InputText
+                  v-model="searchQuery"
+                  placeholder="Search..."
+                  class="w-full"
+                  @input="onSearch"
+                />
+              </IconField>
+            </div>
+          </template>
+
           <Column field="id" header="ID" style="width: 10%" />
           <Column field="username" header="Username" />
           <Column field="email" header="Email" />
@@ -116,7 +148,10 @@ import Column from 'primevue/column'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
+import IconField from 'primevue/iconfield'
+import InputIcon from 'primevue/inputicon'
 import Password from 'primevue/password'
+import Toolbar from 'primevue/toolbar'
 import { useToast } from 'primevue/usetoast'
 
 const toast = useToast()
@@ -124,6 +159,12 @@ const toast = useToast()
 const users = ref([])
 const loading = ref(false)
 const dialogVisible = ref(false)
+const searchQuery = ref('')
+const totalRecords = ref(0)
+const rows = ref(10)
+const first = ref(0)
+let searchTimeout = null
+
 const newUser = ref({
   username: '',
   email: '',
@@ -134,8 +175,13 @@ const newUser = ref({
 const loadUsers = async () => {
   loading.value = true
   try {
-    const response = await adminService.listUsers()
-    users.value = response.data
+    const skip = first.value
+    const limit = rows.value
+    const search = searchQuery.value.trim()
+    
+    const response = await adminService.listUsers(skip, limit, search)
+    users.value = response.data.data
+    totalRecords.value = response.data.total
   } catch (error) {
     toast.add({
       severity: 'error',
@@ -145,6 +191,21 @@ const loadUsers = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const onPage = (event) => {
+  first.value = event.first
+  rows.value = event.rows
+  loadUsers()
+}
+
+const onSearch = () => {
+  // Debounce search to avoid too many API calls
+  clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(() => {
+    first.value = 0 // Reset to first page on search
+    loadUsers()
+  }, 500)
 }
 
 const openDialog = () => {
@@ -194,6 +255,37 @@ const deleteUser = async (userId) => {
       })
     }
   }
+}
+
+const exportUsers = () => {
+  // Export users to CSV
+  const headers = ['ID', 'Username', 'Email', 'Full Name', 'Role']
+  const csvData = users.value.map(user => [
+    user.id,
+    user.username,
+    user.email,
+    user.full_name,
+    user.role.name
+  ])
+  
+  const csvContent = [
+    headers.join(','),
+    ...csvData.map(row => row.join(','))
+  ].join('\n')
+  
+  const blob = new Blob([csvContent], { type: 'text/csv' })
+  const url = window.URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `users_${new Date().toISOString().split('T')[0]}.csv`
+  link.click()
+  window.URL.revokeObjectURL(url)
+  
+  toast.add({
+    severity: 'success',
+    summary: 'Success',
+    detail: 'Users exported successfully'
+  })
 }
 
 onMounted(loadUsers)

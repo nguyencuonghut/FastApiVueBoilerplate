@@ -37,10 +37,10 @@ export const userService = {
 }
 
 export const adminService = {
-  // List all users
-  listUsers: (skip = 0, limit = 100) => {
+  // List all users with pagination and search
+  listUsers: (skip = 0, limit = 10, search = '') => {
     return apiClient.get(`${ADMIN_API}/users`, {
-      params: { skip, limit }
+      params: { skip, limit, search: search || undefined }
     })
   },
 

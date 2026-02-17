@@ -4,10 +4,12 @@ import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura'
 import Tooltip from 'primevue/tooltip'
 import StyleClass from 'primevue/styleclass'
+import ToastService from 'primevue/toastservice'
 import App from './App.vue'
 import router from './router'
 
 import 'primeicons/primeicons.css'
+import 'primeflex/primeflex.css'
 import './assets/styles/layout.scss?v=2'
 
 const app = createApp(App)
@@ -22,6 +24,7 @@ app.use(PrimeVue, {
     }
   }
 })
+app.use(ToastService)
 
 // Register PrimeVue directives
 app.directive('tooltip', Tooltip)

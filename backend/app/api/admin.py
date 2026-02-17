@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
-from typing import List
+from sqlalchemy import or_, func
+from typing import List, Optional
 from app.database.database import get_db
 from app.schemas.user import UserResponse, UserCreate, RoleResponse, PermissionResponse
 from app.security.dependencies import get_admin_user
@@ -10,16 +11,40 @@ from app.models import User, Role, Permission
 router = APIRouter(prefix="/admin", tags=["admin"])
 
 
-@router.get("/users", response_model=List[UserResponse])
+@router.get("/users")
 async def list_users(
-    skip: int = 0,
-    limit: int = 100,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1, le=100),
+    search: Optional[str] = Query(None),
     admin_user: User = Depends(get_admin_user),
     db: Session = Depends(get_db)
 ):
-    """List all users (admin only)"""
-    users = db.query(User).offset(skip).limit(limit).all()
-    return users
+    """List users with pagination and search (admin only)"""
+    query = db.query(User)
+    
+    # Apply search filter
+    if search:
+        search_filter = f"%{search}%"
+        query = query.filter(
+            or_(
+                User.username.ilike(search_filter),
+                User.email.ilike(search_filter),
+                User.full_name.ilike(search_filter)
+            )
+        )
+    
+    # Get total count before pagination
+    total = query.count()
+    
+    # Apply pagination
+    users = query.offset(skip).limit(limit).all()
+    
+    return {
+        "data": [UserResponse.model_validate(user) for user in users],
+        "total": total,
+        "skip": skip,
+        "limit": limit
+    }
 
 
 @router.get("/users/{user_id}", response_model=UserResponse)

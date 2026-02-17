@@ -10,7 +10,6 @@
     </div>
     <div class="layout-mask animate-fadein" @click="hideMobileMenu" />
   </div>
-  <Toast />
 </template>
 
 <script setup>
@@ -19,7 +18,6 @@ import { computed } from 'vue'
 import AppFooter from '@/components/AppFooter.vue'
 import AppSidebar from '@/components/AppSidebar.vue'
 import AppTopbar from '@/components/AppTopbar.vue'
-import Toast from 'primevue/toast'
 
 const { layoutConfig, layoutState, hideMobileMenu } = useLayout()
 

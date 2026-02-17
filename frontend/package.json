@@ -10,11 +10,13 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@primeuix/themes": "^2.0.3",
     "@primevue/themes": "^4.3.0",
     "axios": "^1.7.0",
     "pinia": "^2.2.0",
+    "primeflex": "^4.0.0",
     "primeicons": "^7.0.0",
-    "primevue": "^4.3.0",
+    "primevue": "^4.5.4",
     "sass": "^1.97.3",
     "vue": "^3.5.0",
     "vue-router": "^4.4.0"
