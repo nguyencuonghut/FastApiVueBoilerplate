@@ -75,11 +75,32 @@ const routes = [
     path: '/kiosk',
     component: () => import('../layouts/KioskLayout.vue'),
     meta: { requiresAuth: true, requiresRoles: ['bao_ve', 'quan_ly_trai'] },
+    redirect: '/kiosk/dashboard',
     children: [
       {
-        path: 'display',
-        name: 'KioskDisplay',
-        component: () => import('../views/DashboardView.vue')
+        path: 'dashboard',
+        name: 'KioskDashboard',
+        component: () => import('../views/kiosk/KioskDashboard.vue')
+      },
+      {
+        path: 'issue-card',
+        name: 'KioskIssueCard',
+        component: () => import('../views/kiosk/KioskIssueCard.vue')
+      },
+      {
+        path: 'return-card',
+        name: 'KioskReturnCard',
+        component: () => import('../views/kiosk/KioskReturnCard.vue')
+      },
+      {
+        path: 'report-lost',
+        name: 'KioskReportLost',
+        component: () => import('../views/kiosk/KioskReportLost.vue')
+      },
+      {
+        path: 'search',
+        name: 'KioskSearch',
+        component: () => import('../views/kiosk/KioskSearch.vue')
       }
     ]
   },

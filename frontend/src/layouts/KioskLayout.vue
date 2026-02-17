@@ -1,14 +1,27 @@
 <template>
-  <div class="kiosk-layout" :class="{ 'fullscreen': isFullscreen }">
-    <!-- Minimal Header -->
-    <div class="kiosk-header">
-      <h1>{{ title }}</h1>
-      <div class="kiosk-controls">
+  <div class="kiosk-layout" :class="{ 'app-dark': isDarkTheme }">
+    <!-- Status Bar -->
+    <div class="kiosk-status-bar">
+      <div class="status-left">
+        <div class="status-item">
+          <i class="pi pi-user"></i>
+          <span>{{ authStore.user?.full_name || 'User' }}</span>
+        </div>
+        <div class="status-item">
+          <i :class="['pi', edgeStatus.icon]" :style="{ color: edgeStatus.color }"></i>
+          <span>{{ edgeStatus.text }}</span>
+        </div>
+      </div>
+      <div class="status-right">
+        <div class="status-item time">
+          {{ currentTime }}
+        </div>
         <Button
           :icon="isFullscreen ? 'pi pi-window-minimize' : 'pi pi-window-maximize'"
           text
           rounded
           @click="toggleFullscreen"
+          class="status-button"
         />
         <Button
           icon="pi pi-sign-out"
@@ -16,47 +29,59 @@
           rounded
           severity="danger"
           @click="handleLogout"
+          class="status-button"
         />
       </div>
     </div>
 
-    <!-- Fullscreen Content -->
+    <!-- Main Content -->
     <div class="kiosk-content">
       <router-view />
-    </div>
-
-    <!-- Auto-hide time indicator -->
-    <div class="kiosk-time" :class="{ 'show': showTime }">
-      {{ currentTime }}
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { useLayout } from '../composables/layout'
 import Button from 'primevue/button'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { isDarkTheme } = useLayout()
 
-const title = ref('Kiosk Mode')
 const isFullscreen = ref(false)
-const showTime = ref(true)
 const currentTime = ref('')
+const edgeConnected = ref(true) // Simulate Edge connection status
 
 let timeInterval = null
-let hideTimeTimeout = null
+
+const edgeStatus = computed(() => {
+  if (edgeConnected.value) {
+    return {
+      icon: 'pi-check-circle',
+      color: '#22c55e',
+      text: 'Edge Connected'
+    }
+  }
+  return {
+    icon: 'pi-times-circle',
+    color: '#ef4444',
+    text: 'Edge Disconnected'
+  }
+})
 
 const updateTime = () => {
   const now = new Date()
-  currentTime.value = now.toLocaleString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
+  currentTime.value = now.toLocaleString('vi-VN', {
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
+    second: '2-digit',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
   })
 }
 
@@ -72,14 +97,6 @@ const toggleFullscreen = () => {
   }
 }
 
-const handleMouseMove = () => {
-  showTime.value = true
-  if (hideTimeTimeout) clearTimeout(hideTimeTimeout)
-  hideTimeTimeout = setTimeout(() => {
-    showTime.value = false
-  }, 3000)
-}
-
 const handleLogout = () => {
   if (document.fullscreenElement) {
     document.exitFullscreen()
@@ -88,21 +105,33 @@ const handleLogout = () => {
   router.push('/login')
 }
 
+// Simulate edge connection check
+const checkEdgeConnection = () => {
+  // In production, this would be an actual API call to Edge device
+  // For now, simulate with random status
+  if (Math.random() > 0.9) {
+    edgeConnected.value = !edgeConnected.value
+  }
+}
+
 onMounted(() => {
   updateTime()
-  timeInterval = setInterval(updateTime, 1000)
-  document.addEventListener('mousemove', handleMouseMove)
+  timeInterval = setInterval(() => {
+    updateTime()
+    checkEdgeConnection()
+  }, 1000)
   
-  // Hide time after 3 seconds
-  hideTimeTimeout = setTimeout(() => {
-    showTime.value = false
-  }, 3000)
+  // Auto enter fullscreen on mobile
+  if (window.innerWidth <= 768) {
+    setTimeout(() => {
+      document.documentElement.requestFullscreen()
+      isFullscreen.value = true
+    }, 500)
+  }
 })
 
 onUnmounted(() => {
   if (timeInterval) clearInterval(timeInterval)
-  if (hideTimeTimeout) clearTimeout(hideTimeTimeout)
-  document.removeEventListener('mousemove', handleMouseMove)
 })
 </script>
 
@@ -111,62 +140,89 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: #000;
-  color: white;
-  position: relative;
+  background: var(--surface-ground);
+  color: var(--text-color);
+  overflow: hidden;
 }
 
-.kiosk-layout.fullscreen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 9999;
-}
-
-.kiosk-header {
+.kiosk-status-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--surface-card);
+  border-bottom: 2px solid var(--surface-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-height: 80px;
 }
 
-.kiosk-header h1 {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-.kiosk-controls {
+.status-left,
+.status-right {
   display: flex;
-  gap: 0.5rem;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.status-item i {
+  font-size: 1.5rem;
+}
+
+.status-item.time {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.status-button {
+  font-size: 1.5rem;
 }
 
 .kiosk-content {
   flex: 1;
-  overflow: hidden;
+  overflow-y: auto;
   padding: 2rem;
 }
 
-.kiosk-time {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  padding: 1rem 2rem;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(10px);
-  border-radius: 8px;
-  font-size: 1.25rem;
-  font-weight: 500;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .kiosk-status-bar {
+    padding: 0.75rem 1rem;
+    min-height: 70px;
+  }
+  
+  .status-left,
+  .status-right {
+    gap: 0.75rem;
+  }
+  
+  .status-item {
+    font-size: 0.875rem;
+  }
+  
+  .status-item i {
+    font-size: 1.125rem;
+  }
+  
+  .kiosk-content {
+    padding: 1rem;
+  }
 }
 
-.kiosk-time.show {
-  opacity: 1;
+@media (max-width: 480px) {
+  .status-item span {
+    display: none;
+  }
+  
+  .status-item.time span {
+    display: inline;
+  }
 }
 </style>
