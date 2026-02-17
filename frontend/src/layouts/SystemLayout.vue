@@ -12,7 +12,7 @@
           :key="item.path"
           :to="item.path"
           class="menu-item"
-          :class="{ active: $route.path === item.path }"
+          :class="{ active: isActiveRoute(item.path) }"
         >
           <i :class="`pi ${item.icon}`"></i>
           <span>{{ item.label }}</span>
@@ -76,26 +76,14 @@ const menuItems = [
     label: 'System Dashboard', 
     icon: 'pi-chart-line',
     description: 'System overview and metrics'
-  },
-  { 
-    path: '/system/services', 
-    label: 'Services', 
-    icon: 'pi-server',
-    description: 'Manage system services'
-  },
-  { 
-    path: '/system/logs', 
-    label: 'Logs', 
-    icon: 'pi-file',
-    description: 'View system logs'
-  },
-  { 
-    path: '/system/settings', 
-    label: 'Settings', 
-    icon: 'pi-sliders-h',
-    description: 'System configuration'
   }
 ]
+
+const isActiveRoute = (path) => {
+  // Check if current route path starts with menu item path
+  // This supports nested routes
+  return route.path === path || route.path.startsWith(path + '/')
+}
 
 const handleLogout = () => {
   authStore.clearTokens()

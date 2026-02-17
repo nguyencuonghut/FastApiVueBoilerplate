@@ -75,12 +75,7 @@ const model = ref([
       {
         label: `${authStore.user?.full_name || 'User'}`,
         icon: 'pi pi-fw pi-user',
-        to: '/profile'
-      },
-      {
-        label: 'Settings',
-        icon: 'pi pi-fw pi-cog',
-        to: '/profile/settings'
+        to: '/admin/profile'
       }
     ]
   }

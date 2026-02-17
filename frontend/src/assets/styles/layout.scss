@@ -325,6 +325,7 @@
     }
   }
   
+  a.layout-menuitem-link,
   .layout-menuitem-link {
     padding: 0.75rem 1rem;
     color: var(--text-color);
@@ -358,15 +359,20 @@
     &:hover {
       background-color: var(--surface-hover);
     }
+  }
+  
+  a.layout-menuitem-link.active-route,
+  a.layout-menuitem-link.router-link-active,
+  a.layout-menuitem-link.router-link-exact-active,
+  .layout-menuitem-link.active-route,
+  .layout-menuitem-link.router-link-active,
+  .layout-menuitem-link.router-link-exact-active {
+    color: var(--p-primary-color) !important;
+    font-weight: 700;
     
-    &.active-route {
-      background-color: var(--primary-color);
-      color: var(--primary-color-text);
-      
-      .layout-menuitem-text,
-      .layout-menuitem-icon {
-        color: var(--primary-color-text);
-      }
+    .layout-menuitem-text,
+    .layout-menuitem-icon {
+      color: var(--p-primary-color) !important;
     }
   }
   

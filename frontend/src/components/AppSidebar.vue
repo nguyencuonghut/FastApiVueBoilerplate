@@ -18,11 +18,8 @@ let outsideClickListener = null
 watch(
   () => route.path,
   (newPath) => {
-    if (isDesktop()) {
-      layoutState.activePath = null
-    } else {
-      layoutState.activePath = newPath
-    }
+    // Always update activePath for menu state tracking
+    layoutState.activePath = newPath
 
     layoutState.overlayMenuActive = false
     layoutState.mobileMenuActive = false
