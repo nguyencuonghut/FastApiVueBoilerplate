@@ -1,110 +1,113 @@
 <template>
   <div class="monitor-dashboard">
     <!-- Stats Grid -->
-    <div class="stats-grid">
-      <Card class="stat-card" v-for="stat in stats" :key="stat.id">
-        <template #content>
+    <div class="grid">
+      <div v-for="stat in stats" :key="stat.id" class="col-12 md:col-6 lg:col-3">
+        <div class="stat-card">
           <div class="stat-content">
             <div class="stat-icon" :style="{ background: stat.color }">
               <i :class="`pi ${stat.icon}`"></i>
             </div>
             <div class="stat-details">
-              <p class="stat-label">{{ stat.label }}</p>
-              <h2 class="stat-value">{{ stat.value }}</h2>
+              <span class="stat-label">{{ stat.label }}</span>
+              <div class="stat-value">{{ stat.value }}</div>
               <div class="stat-trend" :class="stat.trend">
                 <i :class="`pi ${stat.trend === 'up' ? 'pi-arrow-up' : 'pi-arrow-down'}`"></i>
                 <span>{{ stat.change }}</span>
               </div>
             </div>
           </div>
-        </template>
-      </Card>
+        </div>
+      </div>
     </div>
 
-    <!-- Main Grid -->
-    <div class="dashboard-grid">
+    <!-- Main Content Grid -->
+    <div class="grid">
       <!-- Real-time Activity Feed -->
-      <Card class="activity-card">
-        <template #title>
-          <div class="card-header">
-            <div class="flex align-items-center gap-2">
-              <i class="pi pi-bolt"></i>
-              <span>Real-time Activity</span>
-            </div>
-            <Tag severity="success" value="LIVE" icon="pi pi-circle-fill" class="live-badge" />
-          </div>
-        </template>
-        <template #content>
-          <div class="activity-feed">
-            <div
-              v-for="activity in activities"
-              :key="activity.id"
-              class="activity-item"
-              :class="{ new: activity.isNew }"
-            >
-              <Avatar
-                :label="activity.user.charAt(0)"
-                size="large"
-                :style="{ background: activity.color }"
-              />
-              <div class="activity-details">
-                <p class="activity-action">
-                  <strong>{{ activity.user }}</strong> {{ activity.action }}
-                </p>
-                <p class="activity-time">{{ activity.time }}</p>
+      <div class="col-12 lg:col-6">
+        <Card class="h-full">
+          <template #title>
+            <div class="flex align-items-center justify-content-between">
+              <div class="flex align-items-center gap-2">
+                <i class="pi pi-bolt"></i>
+                <span>Real-time Activity</span>
               </div>
-              <Tag :severity="activity.severity" :value="activity.status" />
+              <Tag severity="success" value="LIVE" icon="pi pi-circle-fill" />
             </div>
-          </div>
-        </template>
-      </Card>
+          </template>
+          <template #content>
+            <div class="activity-feed">
+              <div
+                v-for="activity in activities"
+                :key="activity.id"
+                class="activity-item"
+              >
+                <Avatar
+                  :label="activity.user.charAt(0)"
+                  size="large"
+                  :style="{ background: activity.color, color: 'white' }"
+                />
+                <div class="activity-details">
+                  <div class="activity-action">
+                    <strong>{{ activity.user }}</strong> {{ activity.action }}
+                  </div>
+                  <div class="activity-time">{{ activity.time }}</div>
+                </div>
+                <Tag :severity="activity.severity" :value="activity.status" />
+              </div>
+            </div>
+          </template>
+        </Card>
+      </div>
 
       <!-- System Health -->
-      <Card class="health-card">
-        <template #title>
-          <div class="flex align-items-center gap-2">
-            <i class="pi pi-heart"></i>
-            <span>System Health</span>
-          </div>
-        </template>
-        <template #content>
-          <div class="health-metrics">
-            <div v-for="metric in healthMetrics" :key="metric.name" class="metric-item">
-              <div class="metric-header">
-                <span class="metric-name">{{ metric.name }}</span>
-                <span class="metric-value">{{ metric.value }}%</span>
-              </div>
-              <ProgressBar
-                :value="metric.value"
-                :show-value="false"
-                :class="getHealthClass(metric.value)"
-              />
+      <div class="col-12 lg:col-6">
+        <Card class="h-full">
+          <template #title>
+            <div class="flex align-items-center gap-2">
+              <i class="pi pi-heart"></i>
+              <span>System Health</span>
             </div>
-          </div>
+          </template>
+          <template #content>
+            <div class="health-metrics">
+              <div v-for="metric in healthMetrics" :key="metric.name" class="metric-item">
+                <div class="metric-header">
+                  <span class="metric-name">{{ metric.name }}</span>
+                  <span class="metric-value">{{ metric.value }}%</span>
+                </div>
+                <ProgressBar
+                  :value="metric.value"
+                  :show-value="false"
+                  :class="getHealthClass(metric.value)"
+                />
+              </div>
+            </div>
 
-          <Divider />
+            <Divider />
 
-          <div class="server-status">
-            <h4>Server Status</h4>
-            <div class="status-grid">
-              <div v-for="server in servers" :key="server.name" class="status-item">
-                <i
-                  :class="`pi ${server.status === 'online' ? 'pi-check-circle' : 'pi-times-circle'}`"
-                  :style="{ color: server.status === 'online' ? '#22c55e' : '#ef4444' }"
-                ></i>
-                <div>
-                  <p class="server-name">{{ server.name }}</p>
-                  <p class="server-location">{{ server.location }}</p>
+            <div class="server-status">
+              <h4>Server Status</h4>
+              <div class="status-grid">
+                <div v-for="server in servers" :key="server.name" class="status-item">
+                  <i
+                    :class="`pi ${server.status === 'online' ? 'pi-check-circle' : 'pi-times-circle'}`"
+                    :style="{ color: server.status === 'online' ? '#22c55e' : '#ef4444' }"
+                  ></i>
+                  <div>
+                    <div class="server-name">{{ server.name }}</div>
+                    <div class="server-location">{{ server.location }}</div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </template>
-      </Card>
+          </template>
+        </Card>
+      </div>
     </div>
 
     <!-- Data Table -->
-    <Card class="table-card">
+    <Card>
       <template #title>
         <div class="flex justify-content-between align-items-center">
           <div class="flex align-items-center gap-2">
@@ -334,60 +337,76 @@ onUnmounted(() => {
 .monitor-dashboard {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-}
-
-/* Stats Grid */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
 }
 
-.stat-card {
-  background: var(--surface-card);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--surface-border);
-  transition: transform 0.2s;
+/* Ensure equal height cards */
+:deep(.h-full) {
+  height: 100%;
 }
 
-.stat-card:hover {
-  transform: translateY(-4px);
+:deep(.h-full .p-card) {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+:deep(.h-full .p-card-body) {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+:deep(.h-full .p-card-content) {
+  flex: 1;
+}
+
+/* Stat Cards */
+.stat-card {
+  background: var(--surface-card);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  border: 1px solid var(--surface-border);
+  height: 100%;
 }
 
 .stat-content {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .stat-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 1.75rem;
   color: white;
+  flex-shrink: 0;
 }
 
 .stat-details {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
 }
 
 .stat-label {
-  margin: 0;
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-color-secondary);
   font-weight: 500;
 }
 
 .stat-value {
-  margin: 0.25rem 0;
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 700;
-  color: white;
+  color: var(--text-color);
+  line-height: 1;
 }
 
 .stat-trend {
@@ -396,6 +415,7 @@ onUnmounted(() => {
   gap: 0.25rem;
   font-size: 0.875rem;
   font-weight: 600;
+  margin-top: 0.25rem;
 }
 
 .stat-trend.up {
@@ -406,34 +426,12 @@ onUnmounted(() => {
   color: #ef4444;
 }
 
-/* Dashboard Grid */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 1.5rem;
-}
-
-.activity-card,
-.health-card,
-.table-card {
-  background: var(--surface-card);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--surface-border);
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
 /* Activity Feed */
 .activity-feed {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  max-height: 500px;
+  max-height: 450px;
   overflow-y: auto;
 }
 
@@ -443,54 +441,30 @@ onUnmounted(() => {
   gap: 1rem;
   padding: 1rem;
   background: var(--surface-50);
-  border-radius: 8px;
-  transition: all 0.3s;
+  border-radius: var(--border-radius);
+  transition: transform 0.2s;
 }
 
-.activity-item.new {
-  animation: slideIn 0.5s ease;
-  background: var(--primary-50);
-  border-left: 3px solid var(--primary-color);
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+.activity-item:hover {
+  transform: translateX(4px);
+  background: var(--surface-100);
 }
 
 .activity-details {
   flex: 1;
+  min-width: 0;
 }
 
 .activity-action {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 0.95rem;
+  margin: 0 0 0.25rem 0;
+  color: var(--text-color);
+  font-size: 0.9rem;
 }
 
 .activity-time {
-  margin: 0.25rem 0 0 0;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.live-badge {
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.6;
-  }
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-color-secondary);
 }
 
 /* Health Metrics */
@@ -515,12 +489,14 @@ onUnmounted(() => {
 
 .metric-name {
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-color);
+  font-size: 0.9rem;
 }
 
 .metric-value {
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-color);
+  font-size: 0.9rem;
 }
 
 :deep(.health-good .p-progressbar-value) {
@@ -538,13 +514,15 @@ onUnmounted(() => {
 /* Server Status */
 .server-status h4 {
   margin: 0 0 1rem 0;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-color);
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .status-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
 }
 
 .status-item {
@@ -552,30 +530,26 @@ onUnmounted(() => {
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 8px;
+  background: var(--surface-50);
+  border-radius: var(--border-radius);
 }
 
 .status-item i {
   font-size: 1.5rem;
+  flex-shrink: 0;
 }
 
 .server-name {
-  margin: 0;
+  margin: 0 0 0.25rem 0;
   font-weight: 600;
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-color);
 }
 
 .server-location {
-  margin: 0.25rem 0 0 0;
+  margin: 0;
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-/* Table Card */
-.table-card {
-  grid-column: 1 / -1;
+  color: var(--text-color-secondary);
 }
 
 /* Scrollbar */
@@ -584,22 +558,16 @@ onUnmounted(() => {
 }
 
 .activity-feed::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.activity-feed::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--surface-100);
   border-radius: 3px;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
+.activity-feed::-webkit-scrollbar-thumb {
+  background: var(--surface-300);
+  border-radius: 3px;
+}
+
+.activity-feed::-webkit-scrollbar-thumb:hover {
+  background: var(--surface-400);
 }
 </style>

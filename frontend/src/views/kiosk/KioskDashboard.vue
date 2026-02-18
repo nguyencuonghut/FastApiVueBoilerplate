@@ -124,8 +124,9 @@ const navigateTo = (route) => {
 
 .kiosk-title h1 {
   font-size: 2.5rem;
-  font-weight: 700;
+  font-weight: 800;
   margin: 0;
+  color: var(--text-color);
 }
 
 .workflow-grid {
@@ -157,9 +158,10 @@ const navigateTo = (route) => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   opacity: 0;
   transition: opacity 0.3s;
+  pointer-events: none;
 }
 
 .workflow-card:hover {
@@ -179,35 +181,36 @@ const navigateTo = (route) => {
   width: 80px;
   height: 80px;
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(10px);
+  flex-shrink: 0;
 }
 
 .workflow-icon i {
   font-size: 3rem;
-  color: white;
+  color: white !important;
 }
 
 .workflow-info {
   flex: 1;
-  color: white;
+  color: white !important;
 }
 
 .workflow-info h2 {
   font-size: 1.75rem;
   font-weight: 700;
   margin: 0 0 0.5rem 0;
-  color: white;
+  color: white !important;
 }
 
 .workflow-info p {
   font-size: 1.125rem;
   margin: 0;
-  opacity: 0.9;
-  color: white;
+  color: white !important;
+  opacity: 0.95;
 }
 
 .workflow-arrow {
@@ -215,8 +218,8 @@ const navigateTo = (route) => {
   bottom: 2rem;
   right: 2rem;
   font-size: 2rem;
-  color: white;
-  opacity: 0.7;
+  color: white !important;
+  opacity: 0.85;
   transition: all 0.3s;
 }
 

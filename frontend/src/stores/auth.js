@@ -100,7 +100,7 @@ export const useAuthStore = defineStore('auth', () => {
     
     // Bảo Vệ & Quản Lý Trại → KioskLayout
     if (role === 'bao_ve' || role === 'quan_ly_trai') {
-      return '/kiosk/display'
+      return '/kiosk/dashboard'
     }
     
     // Default for other roles
