@@ -62,13 +62,38 @@
           <Column field="email" header="Email" />
           <Column field="full_name" header="Full Name" />
           <Column field="role.name" header="Role" />
-          <Column header="Actions" style="width: 15%">
+          <Column header="Status" style="width: 10%">
             <template #body="{ data }">
-              <Button
-                icon="pi pi-trash"
-                class="p-button-rounded p-button-danger p-button-sm"
-                @click="deleteUser(data.id)"
+              <Tag 
+                :value="data.is_active ? 'Active' : 'Inactive'" 
+                :severity="data.is_active ? 'success' : 'danger'" 
               />
+            </template>
+          </Column>
+          <Column header="Actions" style="width: 20%">
+            <template #body="{ data }">
+              <div class="flex gap-2">
+                <Button
+                  v-if="data.is_active"
+                  icon="pi pi-ban"
+                  class="p-button-rounded p-button-warning p-button-sm"
+                  v-tooltip.top="'Deactivate'"
+                  @click="deactivateUser(data.id)"
+                />
+                <Button
+                  v-else
+                  icon="pi pi-replay"
+                  class="p-button-rounded p-button-success p-button-sm"
+                  v-tooltip.top="'Restore'"
+                  @click="restoreUser(data.id)"
+                />
+                <Button
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-danger p-button-sm"
+                  v-tooltip.top="'Delete Permanently'"
+                  @click="deleteUserPermanently(data.id)"
+                />
+              </div>
             </template>
           </Column>
         </DataTable>
@@ -152,9 +177,12 @@ import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import Password from 'primevue/password'
 import Toolbar from 'primevue/toolbar'
+import Tag from 'primevue/tag'
 import { useToast } from 'primevue/usetoast'
+import { useConfirm } from 'primevue/useconfirm'
 
 const toast = useToast()
+const confirm = useConfirm()
 
 const users = ref([])
 const loading = ref(false)
@@ -255,6 +283,84 @@ const deleteUser = async (userId) => {
       })
     }
   }
+}
+
+const deactivateUser = async (userId) => {
+  confirm.require({
+    message: 'Are you sure you want to deactivate this user? The user will not be able to login.',
+    header: 'Confirm Deactivation',
+    icon: 'pi pi-exclamation-triangle',
+    accept: async () => {
+      try {
+        await adminService.deactivateUser(userId)
+        loadUsers()
+        toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'User deactivated successfully'
+        })
+      } catch (error) {
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.response?.data?.detail || 'Failed to deactivate user'
+        })
+      }
+    }
+  })
+}
+
+const restoreUser = async (userId) => {
+  confirm.require({
+    message: 'Are you sure you want to restore this user? The user will be able to login again.',
+    header: 'Confirm Restoration',
+    icon: 'pi pi-question-circle',
+    accept: async () => {
+      try {
+        await adminService.restoreUser(userId)
+        loadUsers()
+        toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'User restored successfully'
+        })
+      } catch (error) {
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.response?.data?.detail || 'Failed to restore user'
+        })
+      }
+    }
+  })
+}
+
+const deleteUserPermanently = async (userId) => {
+  confirm.require({
+    message: 'Are you sure you want to DELETE this user PERMANENTLY? This action CANNOT be undone!',
+    header: 'Confirm Permanent Deletion',
+    icon: 'pi pi-exclamation-triangle',
+    acceptClass: 'p-button-danger',
+    acceptLabel: 'Delete Permanently',
+    rejectLabel: 'Cancel',
+    accept: async () => {
+      try {
+        await adminService.deleteUserPermanently(userId)
+        loadUsers()
+        toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'User deleted permanently'
+        })
+      } catch (error) {
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.response?.data?.detail || 'Failed to delete user. User may be referenced by other records.'
+        })
+      }
+    }
+  })
 }
 
 const exportUsers = () => {

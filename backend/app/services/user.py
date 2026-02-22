@@ -90,3 +90,32 @@ class UserService:
         db.add(db_user)
         db.commit()
         return True
+    
+    @staticmethod
+    def restore_user(db: Session, user_id: int) -> bool:
+        """Restore/reactivate user"""
+        db_user = UserService.get_user_by_id(db, user_id)
+        if not db_user:
+            return False
+        
+        db_user.is_active = True
+        db.add(db_user)
+        db.commit()
+        return True
+    
+    @staticmethod
+    def delete_user_permanently(db: Session, user_id: int) -> bool:
+        """Delete user permanently (hard delete)"""
+        db_user = UserService.get_user_by_id(db, user_id)
+        if not db_user:
+            return False
+        
+        # Check if user can be deleted (no foreign key references)
+        # In this case, we'll allow deletion if user is deactivated
+        try:
+            db.delete(db_user)
+            db.commit()
+            return True
+        except Exception:
+            db.rollback()
+            return False

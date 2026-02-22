@@ -59,6 +59,16 @@ export const adminService = {
     return apiClient.delete(`${ADMIN_API}/users/${userId}`)
   },
 
+  // Restore user
+  restoreUser: (userId) => {
+    return apiClient.put(`${ADMIN_API}/users/${userId}/restore`)
+  },
+
+  // Delete user permanently
+  deleteUserPermanently: (userId) => {
+    return apiClient.delete(`${ADMIN_API}/users/${userId}/permanent`)
+  },
+
   // List roles
   listRoles: () => {
     return apiClient.get(`${ADMIN_API}/roles`)

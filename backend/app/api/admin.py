@@ -103,6 +103,45 @@ async def deactivate_user(
     return {"message": "User deactivated successfully"}
 
 
+@router.put("/users/{user_id}/restore")
+async def restore_user(
+    user_id: int,
+    admin_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db)
+):
+    """Restore/reactivate user (admin only)"""
+    success = UserService.restore_user(db, user_id)
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    return {"message": "User restored successfully"}
+
+
+@router.delete("/users/{user_id}/permanent")
+async def delete_user_permanently(
+    user_id: int,
+    admin_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db)
+):
+    """Delete user permanently (admin only)"""
+    # Prevent self-deletion
+    if user_id == admin_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot delete yourself"
+        )
+    
+    success = UserService.delete_user_permanently(db, user_id)
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Failed to delete user. User may be referenced by other records."
+        )
+    return {"message": "User deleted permanently"}
+
+
 @router.get("/roles", response_model=List[RoleResponse])
 async def list_roles(
     admin_user: User = Depends(get_admin_user),

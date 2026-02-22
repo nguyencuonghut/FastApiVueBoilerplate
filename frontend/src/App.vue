@@ -4,6 +4,7 @@
     <router-view />
   </div>
   <Toast />
+  <ConfirmDialog />
 </template>
 
 <script setup>
@@ -12,6 +13,7 @@ import { useRoute } from 'vue-router'
 import { useAuthStore } from './stores/auth'
 import Navbar from './components/Navbar.vue'
 import Toast from 'primevue/toast'
+import ConfirmDialog from 'primevue/confirmdialog'
 
 const route = useRoute()
 const authStore = useAuthStore()
