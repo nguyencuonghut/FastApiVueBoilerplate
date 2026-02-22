@@ -86,6 +86,39 @@ All services will start:
 - Frontend: http://localhost:5173
 - PostgreSQL: localhost:5432
 
+## Database Management
+
+Manage your database with Laravel-style commands. See [DATABASE.md](DATABASE.md) for full documentation.
+
+### Quick Commands
+
+```bash
+# Check database status
+docker exec fastapi_vue_backend python manage.py status
+
+# Fresh install with demo data
+docker exec fastapi_vue_backend python manage.py reset
+
+# Just seed data
+docker exec fastapi_vue_backend python manage.py seed
+```
+
+### Available Commands
+- `migrate` - Create all tables
+- `seed` - Seed with demo data
+- `refresh` - Drop and recreate tables
+- `reset` - Drop, recreate, and seed (fresh start)
+- `drop` - Drop all tables
+- `status` - Show database info
+
+**Demo Users Created:**
+- `superadmin` / `super123` (SuperAdmin)
+- `admin` / `admin123` (Admin)
+- `it_staff` / `it123` (IT Staff)
+- `bao_tri_user` / `baotri123` (Maintenance)
+- `bao_ve_user` / `baove123` (Security)
+- `quan_ly` / `quanly123` (Site Manager)
+
 ## Project Structure
 
 ```
