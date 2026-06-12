@@ -1,17 +1,40 @@
 # FastAPI Vue Boilerplate
 
-A professional, full-stack boilerplate with **FastAPI backend**, **Vue 3 frontend**, **PostgreSQL database**, and **RBAC authentication**.
+A professional, full-stack boilerplate with **FastAPI backend**, **Vue 3 frontend**, **PostgreSQL database**, and **RBAC authentication**. The system is designed to serve multiple user personas by delivering different interface layouts and navigation flows based on the authenticated user's role.
+
+This project supports multiple role-specific UI shells, including admin, monitor, kiosk, and user dashboards. Each role sees a different set of routes, menus, and pages, making it ideal for enterprise applications with mixed user types.
 
 ## Features
 
 ### ✨ Core Features
 - ✅ **JWT-based Authentication** - Secure token-based auth with refresh tokens
-- ✅ **RBAC System** - Role-Based Access Control with granular permissions
-- ✅ **Admin Dashboard** - Modern admin interface with SakaiVue inspired design
+- ✅ **Role-Based Interface Switching** - Different layouts and dashboards are rendered automatically for each role
+- ✅ **Multi-Layout Support** - Separate admin, monitor, kiosk, and user shells with role-aware navigation
+- ✅ **RBAC System** - Role-Based Access Control with granular permissions and protected routes
+- ✅ **Admin Dashboard** - Full-featured admin interface for user and role management
+- ✅ **Monitor Dashboard** - Maintenance and monitoring view for operational staff
+- ✅ **Kiosk Interface** - Simplified kiosk mode for security guards and site managers
 - ✅ **User Dashboard** - Real-time monitoring screen for regular users
 - ✅ **User Management** - Admin can create, update, and manage users
 - ✅ **Role Management** - Define roles and assign permissions
 - ✅ **Responsive UI** - Mobile-first design with PrimeVue components
+
+### 🧩 Role-Based Interfaces
+The app dynamically selects the UI layout and route structure according to the authenticated user's role.
+- **SuperAdmin / Admin**: admin layout with user management, role management, and system configuration pages.
+- **IT Staff**: system/dashboard layout with monitoring and configuration access.
+- **Maintenance (Bảo Trì)**: monitor layout focused on operational health and reports.
+- **Security Guard / Site Manager**: kiosk layout with simplified access and task-specific pages.
+- **Regular Users**: user dashboard layout with monitoring and personal profile pages.
+
+### 🖼️ Role-Based UI Screenshots
+This project is best documented with role-specific screenshot previews. Recommended screenshot assets include:
+- `docs/screenshots/admin-dashboard.png` — Admin panel and role management interface
+- `docs/screenshots/monitor-dashboard.png` — Maintenance / monitor dashboard interface
+- `docs/screenshots/kiosk-dashboard.png` — Kiosk layout for security guard and site manager
+- `docs/screenshots/user-dashboard.png` — Regular user dashboard and profile view
+
+Add these images to the repository and update this section with the actual preview file names so users can see the interface for each role.
 
 ### 🎨 Professional Features
 - 📊 **Real-time Dashboards** - Live statistics and monitoring
@@ -71,9 +94,11 @@ Frontend will run at `http://localhost:5173`
 
 ### 3. Demo Login Credentials
 
-After initialization, use:
-- **Admin**: `admin` / `admin123`
-- **User**: `user` / `user123`
+After initialization, use one of the seeded demo accounts. Each account will open a tailored interface based on its role:
+- **SuperAdmin**: `superadmin@example.com` / `super123` — full system access and admin layout
+- **Admin**: `admin` / `admin123` — administrative user and management interface
+- **IT Staff**: `it@example.com` / `it123` — system and monitoring dashboard
+- **Regular User**: `user` / `user123` — user dashboard and monitoring UI
 
 ## Docker Setup
 
