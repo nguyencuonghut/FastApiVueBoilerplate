@@ -28,13 +28,32 @@ The app dynamically selects the UI layout and route structure according to the a
 - **Regular Users**: user dashboard layout with monitoring and personal profile pages.
 
 ### 🖼️ Role-Based UI Screenshots
-This project is best documented with role-specific screenshot previews. Recommended screenshot assets include:
-- `docs/screenshots/admin-dashboard.png` — Admin panel and role management interface
-- `docs/screenshots/monitor-dashboard.png` — Maintenance / monitor dashboard interface
-- `docs/screenshots/kiosk-dashboard.png` — Kiosk layout for security guard and site manager
-- `docs/screenshots/user-dashboard.png` — Regular user dashboard and profile view
+Below are inline previews using the actual screenshot files located in `docs/screenshots/`. These images are shown so readers immediately see the UI for each role; replace them with higher-fidelity screenshots if you have updated captures.
 
-Add these images to the repository and update this section with the actual preview file names so users can see the interface for each role.
+<table>
+	<tr>
+		<td align="center">
+			<img src="docs/screenshots/admin-dashboard.png" alt="Admin Dashboard" width="480" />
+			<p><strong>Admin</strong><br/>User & Role Management</p>
+		</td>
+		<td align="center">
+			<img src="docs/screenshots/monitor-dashboard.png" alt="Monitor Dashboard" width="480" />
+			<p><strong>Monitor</strong><br/>System Health & Metrics</p>
+		</td>
+	</tr>
+	<tr>
+		<td align="center">
+			<img src="docs/screenshots/kiosk-dashboard.png" alt="Kiosk Dashboard" width="480" />
+			<p><strong>Kiosk</strong><br/>Simplified task UI</p>
+		</td>
+		<td align="center">
+			<img src="docs/screenshots/user-dashboard.png" alt="User Dashboard" width="480" />
+			<p><strong>User</strong><br/>Realtime Monitoring</p>
+		</td>
+	</tr>
+</table>
+
+If you prefer SVG placeholders or want to include both formats, update the `src` attributes accordingly. Files are located in `docs/screenshots/`.
 
 ### 🎨 Professional Features
 - 📊 **Real-time Dashboards** - Live statistics and monitoring
