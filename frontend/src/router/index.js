@@ -148,10 +148,21 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresRoles && authStore.isAuthenticated) {
     const userRole = authStore.getUserRole
     const allowedRoles = to.meta.requiresRoles
-    
+    const defaultRoute = authStore.getDefaultRoute()
+
     if (!allowedRoles.includes(userRole)) {
-      // Redirect to user's default route if not authorized
-      next(authStore.getDefaultRoute())
+      if (!userRole) {
+        authStore.clearTokens()
+        next({ name: 'Login', query: { redirect: to.fullPath } })
+        return
+      }
+
+      if (to.path !== defaultRoute) {
+        next(defaultRoute)
+        return
+      }
+
+      next({ name: 'Login', query: { redirect: to.fullPath } })
       return
     }
   }

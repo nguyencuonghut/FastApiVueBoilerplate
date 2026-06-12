@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, func
-from typing import List, Optional
+from typing import List, Optional, Annotated
 from app.database.database import get_db
 from app.schemas.user import UserResponse, UserCreate, RoleResponse, PermissionResponse
 from app.security.dependencies import get_admin_user
@@ -13,11 +13,11 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 
 @router.get("/users")
 async def list_users(
-    skip: int = Query(0, ge=0),
-    limit: int = Query(10, ge=1, le=100),
-    search: Optional[str] = Query(None),
-    admin_user: User = Depends(get_admin_user),
-    db: Session = Depends(get_db)
+    _admin_user: Annotated[User, Depends(get_admin_user)],
+    db: Annotated[Session, Depends(get_db)],
+    skip: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=100)] = 10,
+    search: Annotated[Optional[str], Query()] = None
 ):
     """List users with pagination and search (admin only)"""
     query = db.query(User)
@@ -50,8 +50,8 @@ async def list_users(
 @router.get("/users/{user_id}", response_model=UserResponse)
 async def get_user(
     user_id: int,
-    admin_user: User = Depends(get_admin_user),
-    db: Session = Depends(get_db)
+    _admin_user: Annotated[User, Depends(get_admin_user)],
+    db: Annotated[Session, Depends(get_db)]
 ):
     """Get specific user (admin only)"""
     user = UserService.get_user_by_id(db, user_id)
@@ -66,8 +66,8 @@ async def get_user(
 @router.post("/users", response_model=UserResponse)
 async def create_user(
     user: UserCreate,
-    admin_user: User = Depends(get_admin_user),
-    db: Session = Depends(get_db)
+    _admin_user: Annotated[User, Depends(get_admin_user)],
+    db: Annotated[Session, Depends(get_db)]
 ):
     """Create new user (admin only)"""
     # Check if user already exists
@@ -90,8 +90,8 @@ async def create_user(
 @router.delete("/users/{user_id}")
 async def deactivate_user(
     user_id: int,
-    admin_user: User = Depends(get_admin_user),
-    db: Session = Depends(get_db)
+    _admin_user: Annotated[User, Depends(get_admin_user)],
+    db: Annotated[Session, Depends(get_db)]
 ):
     """Deactivate user (admin only)"""
     success = UserService.deactivate_user(db, user_id)
@@ -106,8 +106,8 @@ async def deactivate_user(
 @router.put("/users/{user_id}/restore")
 async def restore_user(
     user_id: int,
-    admin_user: User = Depends(get_admin_user),
-    db: Session = Depends(get_db)
+    _admin_user: Annotated[User, Depends(get_admin_user)],
+    db: Annotated[Session, Depends(get_db)]
 ):
     """Restore/reactivate user (admin only)"""
     success = UserService.restore_user(db, user_id)
@@ -122,8 +122,8 @@ async def restore_user(
 @router.delete("/users/{user_id}/permanent")
 async def delete_user_permanently(
     user_id: int,
-    admin_user: User = Depends(get_admin_user),
-    db: Session = Depends(get_db)
+    admin_user: Annotated[User, Depends(get_admin_user)],
+    db: Annotated[Session, Depends(get_db)]
 ):
     """Delete user permanently (admin only)"""
     # Prevent self-deletion
@@ -144,8 +144,8 @@ async def delete_user_permanently(
 
 @router.get("/roles", response_model=List[RoleResponse])
 async def list_roles(
-    admin_user: User = Depends(get_admin_user),
-    db: Session = Depends(get_db)
+    _admin_user: Annotated[User, Depends(get_admin_user)],
+    db: Annotated[Session, Depends(get_db)]
 ):
     """List all roles (admin only)"""
     roles = db.query(Role).all()
@@ -154,8 +154,8 @@ async def list_roles(
 
 @router.get("/permissions", response_model=List[PermissionResponse])
 async def list_permissions(
-    admin_user: User = Depends(get_admin_user),
-    db: Session = Depends(get_db)
+    _admin_user: Annotated[User, Depends(get_admin_user)],
+    db: Annotated[Session, Depends(get_db)]
 ):
     """List all permissions (admin only)"""
     permissions = db.query(Permission).all()

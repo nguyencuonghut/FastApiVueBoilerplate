@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from typing import Annotated
 from app.database.database import get_db
 from app.schemas.user import UserResponse, UserUpdate, ChangePassword
 from app.security.dependencies import get_current_user
@@ -12,7 +13,7 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 @router.get("/me", response_model=UserResponse)
 async def get_current_user_info(
-    current_user: User = Depends(get_current_user)
+    current_user: Annotated[User, Depends(get_current_user)]
 ):
     """Get current user information"""
     return current_user
@@ -21,8 +22,8 @@ async def get_current_user_info(
 @router.put("/me", response_model=UserResponse)
 async def update_current_user(
     user_update: UserUpdate,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)]
 ):
     """Update current user information"""
     updated_user = UserService.update_user(db, current_user.id, user_update)
@@ -39,8 +40,8 @@ async def update_current_user(
 @router.post("/change-password")
 async def change_password(
     password_change: ChangePassword,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)]
 ):
     """Change current user password"""
     # Verify current password

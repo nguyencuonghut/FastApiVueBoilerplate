@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from typing import Annotated
 from datetime import timedelta
 from app.database.database import get_db
 from app.schemas.user import LoginRequest, TokenResponse, TokenRefresh, UserResponse
@@ -13,7 +14,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 @router.post("/login", response_model=TokenResponse)
 async def login(
     credentials: LoginRequest,
-    db: Session = Depends(get_db)
+    db: Annotated[Session, Depends(get_db)]
 ):
     """User login"""
     user = UserService.authenticate_user(db, credentials.email, credentials.password)
@@ -38,7 +39,7 @@ async def login(
 @router.post("/refresh", response_model=TokenResponse)
 async def refresh_token(
     token_refresh: TokenRefresh,
-    db: Session = Depends(get_db)
+    db: Annotated[Session, Depends(get_db)]
 ):
     """Refresh access token"""
     user_id = get_user_id_from_token(token_refresh.refresh_token)

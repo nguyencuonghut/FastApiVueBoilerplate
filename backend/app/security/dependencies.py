@@ -1,4 +1,5 @@
 from fastapi import Depends, HTTPException, status
+from typing import Annotated
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from app.database.database import get_db
@@ -9,8 +10,8 @@ security = HTTPBearer()
 
 
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-    db: Session = Depends(get_db)
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
+    db: Annotated[Session, Depends(get_db)]
 ) -> User:
     """Get current authenticated user"""
     token = credentials.credentials
@@ -36,7 +37,7 @@ async def get_current_user(
 
 
 async def get_admin_user(
-    current_user: User = Depends(get_current_user)
+    current_user: Annotated[User, Depends(get_current_user)]
 ) -> User:
     """Verify current user is admin or superadmin"""
     if current_user.role.name not in ["admin", "superadmin"]:
@@ -50,7 +51,7 @@ async def get_admin_user(
 def require_permission(permission_name: str):
     """Factory to create permission dependency"""
     async def permission_checker(
-        current_user: User = Depends(get_current_user)
+        current_user: Annotated[User, Depends(get_current_user)]
     ) -> User:
         permissions = [p.name for p in current_user.role.permissions]
         if permission_name not in permissions:

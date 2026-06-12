@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
+from typing import Annotated
 from app.database.database import get_db
 from app.security.dependencies import get_current_user
 from app.models import User
@@ -9,8 +10,8 @@ router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
 @router.get("/stats")
 async def get_dashboard_stats(
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)]
 ):
     """Get dashboard statistics (role-specific)"""
     if current_user.role.name == "admin":
@@ -38,8 +39,8 @@ async def get_dashboard_stats(
 
 @router.get("/activity-log")
 async def get_activity_log(
-    current_user: User = Depends(get_current_user),
-    limit: int = 20
+    current_user: Annotated[User, Depends(get_current_user)],
+    limit: Annotated[int, Query(gt=0)] = 20
 ):
     """Get recent activity log"""
     # This is a placeholder - in production, you'd query an audit log table
